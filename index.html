@@ -1,6 +1,9 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hamburg Sparkler Map</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
@@ -792,6 +795,8 @@ td .links{display:flex;flex-direction:column;gap:2px}
   .list{max-height:none;overflow:visible;padding-right:0}
 }
 </style>
+</head>
+<body>
 
 <header class="hero">
   <div class="in">
@@ -887,7 +892,7 @@ td .links{display:flex;flex-direction:column;gap:2px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
-const TILES = false;
+const TILES = true;
 const URL_R = "https://www.budni.de/sortiment/produkte/3709869000";
 const URL_C = "https://www.budni.de/sortiment/produkte/976363006";
 const AREAS = ["Altona & Ottensen","Schanze & St. Pauli","Dammtor & Alster","Hauptbahnhof & around"];
@@ -1002,4 +1007,5 @@ if (!["all","riesen","classic"].includes(start)) start="all";
 applyFilter(start);
 </script>
 
-</body></html>
+</body>
+</html>
