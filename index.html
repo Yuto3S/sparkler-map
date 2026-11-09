@@ -1,11 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Hamburg Sparkler Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>/* required styles */
 
 .leaflet-pane,
@@ -669,185 +667,339 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	}
 </style>
 <style>
-/* Layout: header band, then list + map side by side; stacks map-first on phones */
+/* Layout: night-sky hero band, "at a glance" cards, then map + grouped store list (stacks map-first on phones) */
 :root{
-  --bg:#f3f4f7; --surface:#ffffff; --fg:#1b2030; --muted:#5b6275; --line:#dfe2ea;
-  --gold:#b87900; --gold-soft:#fbe9bf; --low:#c2410c; --low-soft:#fde3d4; --off:#9aa1b2;
-  --map:#e7eaf1; --rail:#8a91a3;
-  --display:"Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --bg:#f4f5f9; --surface:#ffffff; --fg:#161a2b; --muted:#596079; --line:#e0e3ec;
+  --gold:#a86f00; --spark:#f5b82e; --spark-soft:#fdeec8; --low:#c2410c; --low-soft:#fde4d6; --none:#8b92a8;
+  --night:#141a3a; --night-fg:#f3f1ea; --night-muted:#b9bdd3;
+  --map:#e6e9f1; --tile-filter:none;
+  --display:"Bricolage Grotesque", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1220; --surface:#161b2c; --fg:#e9ebf3; --muted:#a2a9bd; --line:#2a3148;
-  --gold:#f2c14e; --gold-soft:#3a3016; --low:#fb923c; --low-soft:#3b2416; --off:#59607a;
-  --map:#12172a; --rail:#59607a; color-scheme:dark}}
+  --bg:#0d1020; --surface:#151a2e; --fg:#eceef6; --muted:#a3aac0; --line:#262d47;
+  --gold:#f5c04f; --spark-soft:#3a3018; --low:#fb923c; --low-soft:#3b2516; --none:#6b7290;
+  --night:#070914; --map:#12172a; --tile-filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9) saturate(.6); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1220; --surface:#161b2c; --fg:#e9ebf3; --muted:#a2a9bd; --line:#2a3148;
-  --gold:#f2c14e; --gold-soft:#3a3016; --low:#fb923c; --low-soft:#3b2416; --off:#59607a;
-  --map:#12172a; --rail:#59607a; color-scheme:dark}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
-.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 28px;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
-header{display:flex;flex-direction:column;gap:6px}
-h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,36px);line-height:1.1;margin:0;text-wrap:balance}
-h1 .spark{color:var(--gold)}
-.sub{color:var(--muted);margin:0;max-width:70ch}
-.filters{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:6px 12px;border-radius:999px;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.chip:focus-visible,.store:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.main{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:16px;align-items:start}
-#map{height:620px;border-radius:10px;border:1px solid var(--line);background:var(--map)}
-.list{display:flex;flex-direction:column;gap:8px;max-height:620px;overflow-y:auto;padding-right:4px}
-.store{display:flex;flex-direction:column;gap:4px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;cursor:pointer;text-align:left;font:inherit;color:inherit}
-.store.active{border-color:var(--gold)}
-.store .name{font-family:var(--display);font-weight:700;font-size:16px}
-.store .addr{color:var(--muted);font-size:13.5px}
+  --bg:#0d1020; --surface:#151a2e; --fg:#eceef6; --muted:#a3aac0; --line:#262d47;
+  --gold:#f5c04f; --spark-soft:#3a3018; --low:#fb923c; --low-soft:#3b2516; --none:#6b7290;
+  --night:#070914; --map:#12172a; --tile-filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9) saturate(.6); color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15.5px;line-height:1.5;margin:0}
+.in{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--gold);text-underline-offset:2px}
+a:focus-visible,button:focus-visible,.store:focus-visible{outline:2px solid var(--spark);outline-offset:2px}
+
+/* hero */
+.hero{background:var(--night);color:var(--night-fg)}
+.hero .in{padding-block:18px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--spark);font-weight:700;margin:0 0 4px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(24px,4.2vw,38px);line-height:1.05;margin:0;letter-spacing:-.02em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--spark)}
+.lede{color:var(--night-muted);max-width:60ch;margin:14px 0 0;font-size:16.5px}
+.facts{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:8px;font-size:14px;color:var(--night-muted)}
+.facts b{color:var(--night-fg);font-variant-numeric:tabular-nums}
+.burst{width:64px;height:64px}
+.burst line{stroke:var(--spark);stroke-width:3;stroke-linecap:round}
+.burst .core{fill:#fff7df}
+@media (prefers-reduced-motion:no-preference){.burst g{transform-origin:60px 60px;animation:fizz 2.4s ease-in-out infinite}}
+@keyframes fizz{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(.88) rotate(8deg)}}
+
+section{padding-block:28px 0}
+#stores{padding-block:16px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+h2{font-family:var(--display);font-weight:800;font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+.sec-sub{color:var(--muted);margin:0 0 16px}
+
+/* product cards */
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.prod{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.prod-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.prod h3{font-family:var(--display);font-weight:800;font-size:20px;margin:0}
+.price{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.prod p{margin:0;color:var(--muted)}
+.count{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;color:var(--fg);font-variant-numeric:tabular-nums}
+.count small{font-family:var(--body);font-weight:400;font-size:15px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.btn{font:inherit;font-size:14.5px;font-weight:700;border-radius:999px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:var(--spark);border-color:var(--spark);color:#1a1405}
+
+/* shops table */
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:560px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td.shop{font-weight:700;white-space:nowrap}
+.badge{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.badge.yes{background:var(--spark-soft);color:var(--fg)}
+.badge.no{border:1px dashed var(--none);color:var(--muted)}
+td .links{display:flex;flex-direction:column;gap:2px}
+
+/* map + list */
+.toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 16px;align-items:center;margin-bottom:12px}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.seg button{font:inherit;font-size:14px;font-weight:700;border:0;background:transparent;color:var(--muted);padding:7px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.seg .n{font-variant-numeric:tabular-nums;opacity:.75;margin-left:4px;font-weight:400}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:6px;background:var(--spark)}
+.dot.both{box-shadow:0 0 0 3px var(--spark-soft),0 0 0 4px var(--spark)}
+.dot.low{background:var(--low)}
+.main{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:16px;align-items:start}
+#map{height:660px;border-radius:12px;border:1px solid var(--line);background:var(--map);position:sticky;top:12px}
+.list{display:flex;flex-direction:column;gap:8px;max-height:660px;overflow-y:auto;padding-right:4px}
+.area{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:10px 0 0}
+.area:first-child{margin-top:0}
+.store{display:flex;flex-direction:column;gap:6px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.store:hover{border-color:var(--muted)}
+.store.active{border-color:var(--spark);box-shadow:0 0 0 1px var(--spark)}
+.name{font-family:var(--display);font-weight:800;font-size:16.5px;line-height:1.2}
+.addr{color:var(--muted);font-size:13.5px}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
-.pill{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--gold-soft);color:var(--fg)}
+.pill{font-size:12.5px;padding:2px 9px;border-radius:999px;background:var(--spark-soft);color:var(--fg)}
 .pill.low{background:var(--low-soft)}
-.pill.out{background:transparent;border:1px dashed var(--off);color:var(--muted)}
-.links{display:flex;flex-wrap:wrap;gap:12px;font-size:13.5px}
-a{color:var(--gold)}
-.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
-.dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:6px}
-.dot.both{background:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
-.dot.one{background:var(--gold)}
-.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-.note{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:14px}
-.note h2{font-family:var(--display);font-size:16px;margin:0 0 4px}
+.pill.out{background:transparent;border:1px dashed var(--none);color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13.5px}
+
+/* footer notes */
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;padding-block:28px 36px}
+.note h3{font-family:var(--display);font-size:17px;margin:0 0 4px}
 .note p{margin:0;color:var(--muted)}
-/* Leaflet theming */
-.leaflet-container{background:var(--map);font-family:var(--body)}
+
+/* leaflet theming */
+.leaflet-container{background:var(--map);font-family:var(--body);font-size:14px}
+.leaflet-tile-pane{filter:var(--tile-filter)}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--fg)}
-.leaflet-popup-content{margin:12px 14px;line-height:1.45}
-.leaflet-popup-content .name{font-family:var(--display);font-weight:700;font-size:16px}
+.leaflet-popup-content{margin:14px 16px;line-height:1.45;display:flex;flex-direction:column;gap:6px}
+.leaflet-bar a,.leaflet-bar a:hover{background:var(--surface);color:var(--fg);border-bottom-color:var(--line)}
 .leaflet-control-attribution{background:var(--surface)!important;color:var(--muted)}
-.leaflet-bar a{background:var(--surface);color:var(--fg);border-bottom-color:var(--line)}
-.stn{font-size:11.5px;color:var(--muted);background:transparent;border:0;box-shadow:none;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.leaflet-control-attribution a{color:var(--gold)}
+.stn{font-size:11.5px;color:var(--muted);background:transparent;border:0;box-shadow:none;font-weight:700;white-space:nowrap;padding:0}
 .leaflet-tooltip.stn::before{display:none}
-.pin{width:22px;height:22px;display:grid;place-items:center}
-.pin span{width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.35)}
-.pin.both span{width:18px;height:18px;box-shadow:0 0 0 4px var(--gold-soft),0 1px 3px rgba(0,0,0,.35)}
-.pin.lowonly span{background:var(--low)}
-@media (max-width:760px){
+.pin{width:26px;height:26px;display:grid;place-items:center}
+.pin span{width:15px;height:15px;border-radius:50%;background:var(--spark);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)}
+.pin.both span{width:19px;height:19px;box-shadow:0 0 0 3px var(--spark-soft),0 0 0 4px var(--spark),0 1px 4px rgba(0,0,0,.45)}
+.pin.low span{background:var(--low)}
+.pin.sel span{transform:scale(1.35)}
+
+@media (max-width:820px){
+  .hero .in{grid-template-columns:minmax(0,1fr)}
+  .burst{display:none}
   .main{grid-template-columns:minmax(0,1fr)}
-  #map{height:420px;order:-1}
+  #map{height:min(60vh,460px);position:static;order:-1}
   .list{max-height:none;overflow:visible;padding-right:0}
 }
 </style>
-</head>
-<body>
 
-<div class="wrap">
-  <header>
-    <h1>Hamburg <span class="spark">Sparkler</span> Map</h1>
-    <p class="sub">Handheld sparklers (Wunderkerzen) in stock at budni branches from Altona via Sternschanze and Dammtor to Hauptbahnhof. Stock as shown on budni.de on Mon 9 Nov 2026 around 12:50. Both products cost 1,99 €.</p>
-  </header>
+<header class="hero">
+  <div class="in">
+    <div>
+      <p class="eyebrow">Hamburg · Altona to Hauptbahnhof</p>
+      <h1>Where to buy <em>sparklers</em> in Hamburg</h1>
+      <div class="facts">
+        <span>Every pin is a <b>budni</b> with stock</span><span><b id="fact-stores">22</b> stores</span>
+        <span><b>1,99&nbsp;€</b> per pack</span>
+        <span>Checked <b>Mon 9 Nov 2026, 13:10</b></span>
+      </div>
+    </div>
+    <svg class="burst" viewBox="0 0 120 120" aria-hidden="true"><g>
+      <line x1="60" y1="8" x2="60" y2="30"/><line x1="60" y1="90" x2="60" y2="112"/><line x1="8" y1="60" x2="30" y2="60"/><line x1="90" y1="60" x2="112" y2="60"/>
+      <line x1="23" y1="23" x2="38" y2="38"/><line x1="82" y1="82" x2="97" y2="97"/><line x1="97" y1="23" x2="82" y2="38"/><line x1="38" y1="82" x2="23" y2="97"/>
+      <line x1="40" y1="14" x2="45" y2="26"/><line x1="80" y1="106" x2="75" y2="94"/><line x1="106" y1="40" x2="94" y2="45"/><line x1="14" y1="80" x2="26" y2="75"/>
+      <circle class="core" cx="60" cy="60" r="9"/></g></svg>
+  </div>
+</header>
 
-  <div class="filters" role="group" aria-label="Filter by product">
-    <button class="chip" id="f-all" data-f="all" aria-pressed="true">All 16 stores</button>
-    <button class="chip" id="f-riesen" data-f="riesen" aria-pressed="false">Riesenwunderkerze (big)</button>
-    <button class="chip" id="f-classic" data-f="classic" aria-pressed="false">Wunderkerzen (classic box)</button>
-  </div>
-  <div class="legend">
-    <span><i class="dot both"></i>Both products in stock</span>
-    <span><i class="dot one"></i>One product in stock</span>
-    <span><i class="dot" style="background:var(--low)"></i>Only a few left</span>
-  </div>
+<main>
+  <section class="in" id="stores" aria-labelledby="h-map">
+    <h2 id="h-map" class="sr">budni stores with sparklers in stock</h2>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Filter by product">
+        <button type="button" id="f-all" data-f="all" aria-pressed="true">All<span class="n" data-n="all"></span></button>
+        <button type="button" id="f-riesen" data-f="riesen" aria-pressed="false">Riesen<span class="n" data-n="riesen"></span></button>
+        <button type="button" id="f-classic" data-f="classic" aria-pressed="false">Box<span class="n" data-n="classic"></span></button>
+      </div>
+      <div class="legend">
+        <span><i class="dot both"></i>Both products</span>
+        <span><i class="dot"></i>One product</span>
+        <span><i class="dot low"></i>Only a few left</span>
+      </div>
+    </div>
+    <div class="main">
+      <div class="list" id="list" aria-label="Store list"></div>
+      <div id="map" role="region" aria-label="Map of budni stores"></div>
+    </div>
+  </section>
+  <section class="in" aria-labelledby="h-glance">
+    <h2 id="h-glance">The two sparklers</h2>
+    <p class="sec-sub">Both are Riethmüller handheld sparklers from budni. Tap a product page and choose your store for live stock.</p>
+    <div class="products">
+      <article class="prod">
+        <div class="prod-head"><h3>Riesenwunderkerze</h3><span class="price">1,99&nbsp;€</span></div>
+        <p>The long version. Burns longer, looks great on a balcony.</p>
+        <div class="count" id="count-riesen">21 <small>of 22 stores</small></div>
+        <div class="row">
+          <button class="btn primary" type="button" data-show="riesen">Show on map</button>
+          <a class="btn" href="https://www.budni.de/sortiment/produkte/3709869000" target="_blank" rel="noopener">budni product page ↗</a>
+        </div>
+      </article>
+      <article class="prod">
+        <div class="prod-head"><h3>Wunderkerzen (box)</h3><span class="price">1,99&nbsp;€</span></div>
+        <p>The classic shorter sparklers in a box.</p>
+        <div class="count" id="count-classic">7 <small>of 22 stores</small></div>
+        <div class="row">
+          <button class="btn primary" type="button" data-show="classic">Show on map</button>
+          <a class="btn" href="https://www.budni.de/sortiment/produkte/976363006" target="_blank" rel="noopener">budni product page ↗</a>
+        </div>
+      </article>
+    </div>
+  </section>
 
-  <div class="main">
-    <div class="list" id="list"></div>
-    <div id="map" role="region" aria-label="Map of budni stores"></div>
-  </div>
+  <section class="in" aria-labelledby="h-shops">
+    <h2 id="h-shops">Shops I checked</h2>
+    <p class="sec-sub">Online stock checks for the area between Altona, Sternschanze and Hauptbahnhof.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Shop</th><th>Result</th><th>What I found</th><th>Links</th></tr></thead>
+        <tbody>
+          <tr><td class="shop">budni</td><td><span class="badge yes">Has sparklers</span></td><td>Both sparkler types, 22 stores on the map below.</td>
+            <td><div class="links"><a href="https://www.budni.de/sortiment/produkte/3709869000" target="_blank" rel="noopener">Riesenwunderkerze ↗</a><a href="https://www.budni.de/sortiment/produkte/976363006" target="_blank" rel="noopener">Wunderkerzen box ↗</a><a href="https://www.budni.de/filialen" target="_blank" rel="noopener">Store finder ↗</a></div></td></tr>
+          <tr><td class="shop">Rossmann</td><td><span class="badge no">Out of stock</span></td><td>Comet Wunderkerze Gold is sold in stores only, and showed out of stock at all 9 branches near Sternschanze.</td>
+            <td><div class="links"><a href="https://www.rossmann.de/de/baby-und-spielzeug-comet-feuerwerk-wunderkerze-gold/p/4004621095502" target="_blank" rel="noopener">Wunderkerze Gold ↗</a></div></td></tr>
+          <tr><td class="shop">dm</td><td><span class="badge no">Not listed</span></td><td>No sparklers in the online range.</td>
+            <td><div class="links"><a href="https://www.dm.de/search?query=wunderkerzen" target="_blank" rel="noopener">Search on dm.de ↗</a></div></td></tr>
+          <tr><td class="shop">Müller</td><td><span class="badge no">Not handheld</span></td><td>Only cake fountains (Tortenfontänen) for delivery to a store.</td>
+            <td><div class="links"><a href="https://www.mueller.de/search/?q=tortenfont%C3%A4ne" target="_blank" rel="noopener">Tortenfontänen ↗</a></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-  <div class="notes">
-    <div class="note"><h2>The two products</h2><p><a href="https://www.budni.de/sortiment/produkte/3709869000" target="_blank" rel="noopener">Riethmüller Riesenwunderkerze</a> is the long version, nice for a balcony. <a href="https://www.budni.de/sortiment/produkte/976363006" target="_blank" rel="noopener">Riethmüller Wunderkerzen</a> is the classic box. Pick a store on budni.de to see its live stock.</p></div>
-    <div class="note"><h2>Other drugstores I checked</h2><p>Rossmann: its Comet Wunderkerze Gold showed out of stock at all 9 nearby branches. dm: no sparklers in the online range. Müller: only cake fountains (Tortenfontänen) for order-to-store, not handheld.</p></div>
-    <div class="note"><h2>Before you go</h2><p>Stock changes during the day. Tap the budni link and choose the branch to check again, or ask in store. Use sparklers outdoors, keep a bucket of water for the hot wires.</p></div>
+
+  <div class="in notes">
+    <div class="note"><h3>Before you go</h3><p>Stock changes during the day. Open the product page, choose your branch and check it shows "Verfügbar". "Wenige verfügbar" means only a few left.</p></div>
+    <div class="note"><h3>On the balcony</h3><p>Light them outdoors, hold them at arm's length, and keep a bucket of water for the hot wires. They stay hot for a while after the sparks stop.</p></div>
+    <div class="note"><h3>About this map</h3><p id="about-map">Stock from budni.de on 9 Nov 2026 at 13:10. Store pins link to OpenStreetMap and Google Maps for directions.</p></div>
   </div>
-</div>
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
-const R = "https://www.budni.de/sortiment/produkte/3709869000";
-const C = "https://www.budni.de/sortiment/produkte/976363006";
+const TILES = false;
+const URL_R = "https://www.budni.de/sortiment/produkte/3709869000";
+const URL_C = "https://www.budni.de/sortiment/produkte/976363006";
+const AREAS = ["Altona & Ottensen","Schanze & St. Pauli","Dammtor & Alster","Hauptbahnhof & around"];
 // riesen / classic: "yes" | "few" | "no"
 const stores = [
-  {n:"Mercado (Ottensen)", a:"Ottenser Hauptstraße 10, 22765 Hamburg", ll:[53.5527,9.9314], riesen:"yes", classic:"no"},
-  {n:"Bahrenfelder Straße", a:"Bahrenfelder Straße 134, 22765 Hamburg", ll:[53.5532,9.9296], riesen:"yes", classic:"yes"},
-  {n:"Neue Große Bergstraße", a:"Neue Große Bergstraße 18, 22767 Hamburg", ll:[53.5513,9.9387], riesen:"yes", classic:"no"},
-  {n:"Holstenstraße", a:"Holstenstraße 111, 22767 Hamburg", ll:[53.5582,9.9499], riesen:"yes", classic:"yes"},
-  {n:"Schulterblatt 135", a:"Schulterblatt 135, 20357 Hamburg", ll:[53.5655,9.9587], riesen:"yes", classic:"no"},
-  {n:"Schulterblatt 45", a:"Schulterblatt 45, 20357 Hamburg", ll:[53.5610,9.9627], riesen:"yes", classic:"no"},
-  {n:"Schanzenstraße", a:"Schanzenstraße 55, 20357 Hamburg", ll:[53.5613,9.9652], riesen:"yes", classic:"no"},
-  {n:"Clemens-Schultz-Straße", a:"Clemens-Schultz-Straße 38, 20359 Hamburg", ll:[53.5523,9.9625], riesen:"yes", classic:"no"},
-  {n:"Talstraße", a:"Talstraße 36, 20359 Hamburg", ll:[53.5512,9.9604], riesen:"no", classic:"few"},
-  {n:"Rindermarkthalle St. Pauli", a:"Neuer Kamp 31, 20359 Hamburg", ll:[53.5564,9.9665], riesen:"yes", classic:"no"},
-  {n:"Wexstraße", a:"Wexstraße 25, 20355 Hamburg", ll:[53.5512,9.9826], riesen:"yes", classic:"yes"},
-  {n:"Dammtorstraße (Gänsemarkt)", a:"Dammtorstraße 33-35, 20354 Hamburg", ll:[53.5561,9.9881], riesen:"yes", classic:"no"},
-  {n:"Grindelallee", a:"Grindelallee 110-114, 20146 Hamburg", ll:[53.5681,9.9806], riesen:"yes", classic:"no"},
-  {n:"Europa Passage", a:"Bergstraße 16, 20095 Hamburg", ll:[53.5511,9.9956], riesen:"yes", classic:"no"},
-  {n:"Lange Reihe 18-20", a:"Lange Reihe 18-20, 20099 Hamburg", ll:[53.5558,10.0095], riesen:"yes", classic:"no"},
-  {n:"Steindamm", a:"Steindamm 55, 20099 Hamburg", ll:[53.5552,10.0153], riesen:"yes", classic:"no"}
+  {n:"Mercado", a:"Ottenser Hauptstraße 10, 22765 Hamburg", ll:[53.5527,9.9314], ar:0, riesen:"yes", classic:"no"},
+  {n:"Bahrenfelder Straße", a:"Bahrenfelder Straße 134, 22765 Hamburg", ll:[53.5532,9.9296], ar:0, riesen:"yes", classic:"yes"},
+  {n:"Neue Große Bergstraße", a:"Neue Große Bergstraße 18, 22767 Hamburg", ll:[53.5513,9.9387], ar:0, riesen:"yes", classic:"no"},
+  {n:"Holstenstraße", a:"Holstenstraße 111, 22767 Hamburg", ll:[53.5582,9.9499], ar:0, riesen:"yes", classic:"yes"},
+  {n:"Schulterblatt 135", a:"Schulterblatt 135, 20357 Hamburg", ll:[53.5655,9.9587], ar:1, riesen:"yes", classic:"no"},
+  {n:"Schulterblatt 45", a:"Schulterblatt 45, 20357 Hamburg", ll:[53.5610,9.9627], ar:1, riesen:"yes", classic:"no"},
+  {n:"Schanzenstraße", a:"Schanzenstraße 55, 20357 Hamburg", ll:[53.5613,9.9652], ar:1, riesen:"yes", classic:"no"},
+  {n:"Rindermarkthalle St. Pauli", a:"Neuer Kamp 31, 20359 Hamburg", ll:[53.5564,9.9665], ar:1, riesen:"yes", classic:"no"},
+  {n:"Clemens-Schultz-Straße", a:"Clemens-Schultz-Straße 38, 20359 Hamburg", ll:[53.5523,9.9625], ar:1, riesen:"yes", classic:"no"},
+  {n:"Talstraße", a:"Talstraße 36, 20359 Hamburg", ll:[53.5512,9.9604], ar:1, riesen:"no", classic:"few"},
+  {n:"Grindelallee", a:"Grindelallee 110-114, 20146 Hamburg", ll:[53.5681,9.9806], ar:2, riesen:"yes", classic:"no"},
+  {n:"Dammtorstraße", a:"Dammtorstraße 33-35, 20354 Hamburg", ll:[53.5561,9.9881], ar:2, riesen:"yes", classic:"no"},
+  {n:"Wexstraße", a:"Wexstraße 25, 20355 Hamburg", ll:[53.5512,9.9826], ar:2, riesen:"yes", classic:"yes"},
+  {n:"Pöseldorf Center", a:"Milchstraße 1, 20148 Hamburg", ll:[53.5711,9.9953], ar:2, riesen:"yes", classic:"no"},
+  {n:"Hofweg", a:"Hofweg 46-48, 22085 Hamburg", ll:[53.5723,10.0161], ar:2, riesen:"yes", classic:"no"},
+  {n:"Europa Passage", a:"Bergstraße 16, 20095 Hamburg", ll:[53.5511,9.9956], ar:3, riesen:"yes", classic:"no"},
+  {n:"Lange Reihe 18-20", a:"Lange Reihe 18-20, 20099 Hamburg", ll:[53.5558,10.0095], ar:3, riesen:"yes", classic:"no"},
+  {n:"Steindamm", a:"Steindamm 55, 20099 Hamburg", ll:[53.5552,10.0153], ar:3, riesen:"yes", classic:"no"},
+  {n:"Sonninstraße", a:"Sonninstraße 1, 20097 Hamburg", ll:[53.5479,10.0170], ar:3, riesen:"yes", classic:"yes"},
+  {n:"Westfield (HafenCity)", a:"Überseeboulevard 7, 20457 Hamburg", ll:[53.5409,9.9984], ar:3, riesen:"yes", classic:"no"},
+  {n:"Conventstraße", a:"Conventstraße 8-10, 22089 Hamburg", ll:[53.5640,10.0363], ar:3, riesen:"yes", classic:"yes"},
+  {n:"Hammer Steindamm", a:"Hammer Steindamm 72-74, 20535 Hamburg", ll:[53.5635,10.0565], ar:3, riesen:"yes", classic:"few"}
 ];
 const stations = [
   ["Altona",[53.5520,9.9350],"bottom"],["Holstenstraße",[53.5605,9.9455],"left"],["Sternschanze",[53.5634,9.9681],"top"],
   ["Dammtor",[53.5604,9.9897],"right"],["Hauptbahnhof",[53.5530,10.0069],"bottom"],["Reeperbahn",[53.5497,9.9575],"bottom"],["Jungfernstieg",[53.5527,9.9934],"top"]
 ];
 
+const has = (s,f) => f==="all" || s[f] !== "no";
 const label = {yes:"in stock", few:"few left", no:"not in stock"};
-const enc = s => encodeURIComponent("budni " + s);
-const osm = s => "https://www.openstreetmap.org/search?query=" + encodeURIComponent(s.a);
-const gmaps = s => "https://www.google.com/maps/search/?api=1&query=" + enc(s.a);
-const kind = s => (s.riesen!=="no" && s.classic!=="no") ? "both" : ((s.riesen==="few"||s.classic==="few") && s.riesen!=="yes" && s.classic!=="yes" ? "lowonly" : "one");
-const pill = (name, v) => `<span class="pill ${v==="few"?"low":v==="no"?"out":""}">${name}: ${label[v]}</span>`;
-const body = s => `<div class="pills">${pill("Riesen",s.riesen)}${pill("Classic",s.classic)}</div>
-  <div class="links"><a href="${s.riesen!=="no"?R:C}" target="_blank" rel="noopener">Check stock on budni.de</a>
-  <a href="${osm(s)}" target="_blank" rel="noopener">OpenStreetMap</a>
-  <a href="${gmaps(s)}" target="_blank" rel="noopener">Google Maps</a></div>`;
+const kind = s => (s.riesen!=="no" && s.classic!=="no") ? "both" : ((s.riesen!=="yes" && s.classic!=="yes") ? "low" : "one");
+const pill = (name,v) => `<span class="pill ${v==="few"?"low":v==="no"?"out":""}">${name}: ${label[v]}</span>`;
+const links = s => `<div class="links">
+  ${s.riesen!=="no"?`<a href="${URL_R}" target="_blank" rel="noopener">Riesen stock ↗</a>`:""}
+  ${s.classic!=="no"?`<a href="${URL_C}" target="_blank" rel="noopener">Box stock ↗</a>`:""}
+  <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(s.a)}" target="_blank" rel="noopener">OpenStreetMap ↗</a>
+  <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("budni " + s.a)}" target="_blank" rel="noopener">Google Maps ↗</a></div>`;
+const card = s => `<div class="name">budni ${s.n}</div><div class="addr">${s.a}</div><div class="pills">${pill("Riesen",s.riesen)}${pill("Box",s.classic)}</div>${links(s)}`;
 
-const map = L.map("map",{zoomControl:true,attributionControl:true,scrollWheelZoom:true}).setView([53.5575,9.972],14);
-map.setMaxBounds([[53.53,9.90],[53.585,10.04]]);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(map);
-// S-Bahn Verbindungsbahn as a reference line between stations
-L.polyline([stations[0][1],stations[1][1],stations[2][1],stations[3][1],stations[4][1]],{color:getComputedStyle(document.documentElement).getPropertyValue("--rail").trim()||"#8a91a3",weight:3,dashArray:"6 6",interactive:false}).addTo(map);
-const offs = {right:[6,0],left:[-6,0],top:[0,-6],bottom:[0,6]};
-stations.forEach(([n,ll,dir])=>{
-  L.circleMarker(ll,{radius:4,color:"#8a91a3",weight:2,fillOpacity:1,fillColor:"#ffffff",interactive:false}).addTo(map)
-   .bindTooltip("S " + n,{permanent:true,direction:dir,className:"stn",offset:offs[dir]});
-});
+// counts
+const cnt = f => stores.filter(s=>has(s,f)).length;
+document.querySelectorAll("[data-n]").forEach(e=>e.textContent=cnt(e.dataset.n));
+document.getElementById("count-riesen").innerHTML = `${cnt("riesen")} <small>of ${stores.length} stores</small>`;
+document.getElementById("count-classic").innerHTML = `${cnt("classic")} <small>of ${stores.length} stores</small>`;
+document.getElementById("fact-stores").textContent = stores.length;
+
+// map
+const map = L.map("map",{zoomControl:true,attributionControl:TILES,scrollWheelZoom:false,zoomSnap:.5}).setView([53.5575,9.985],13.5);
+map.setMaxBounds([[53.52,9.88],[53.60,10.09]]);
+map.on("focus",()=>map.scrollWheelZoom.enable()); map.on("blur",()=>map.scrollWheelZoom.disable());
+if (TILES) {
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).addTo(map);
+  document.getElementById("about-map").textContent = "Stock from budni.de on 9 Nov 2026 at 13:10. Map data © OpenStreetMap contributors.";
+} else {
+  const rail = getComputedStyle(document.documentElement).getPropertyValue("--none").trim() || "#8b92a8";
+  L.polyline([stations[0][1],stations[1][1],stations[2][1],stations[3][1],stations[4][1]],{color:rail,weight:3,dashArray:"6 6",interactive:false}).addTo(map);
+  const offs={right:[6,0],left:[-6,0],top:[0,-6],bottom:[0,6]};
+  stations.forEach(([n,ll,dir])=>L.circleMarker(ll,{radius:4,color:rail,weight:2,fillOpacity:1,fillColor:"#ffffff",interactive:false}).addTo(map)
+    .bindTooltip("S "+n,{permanent:true,direction:dir,className:"stn",offset:offs[dir]}));
+}
 
 const listEl = document.getElementById("list");
+const groups = AREAS.map(name=>{ const h=document.createElement("p"); h.className="area"; h.textContent=name; listEl.appendChild(h); return {h, items:[]}; });
 const items = stores.map((s,i)=>{
-  const icon = L.divIcon({className:"",html:`<div class="pin ${kind(s)}"><span></span></div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-10]});
-  const m = L.marker(s.ll,{icon,title:s.n,alt:s.n}).bindPopup(`<div class="name">budni ${s.n}</div><div class="addr">${s.a}</div>${body(s)}`,{maxWidth:280});
-  m.addTo(map);
+  const icon = L.divIcon({className:"",html:`<div class="pin ${kind(s)}"><span></span></div>`,iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-12]});
+  const m = L.marker(s.ll,{icon,title:"budni "+s.n,alt:"budni "+s.n,riseOnHover:true}).bindPopup(card(s),{maxWidth:290});
   const el = document.createElement("div");
-  el.className="store"; el.tabIndex=0; el.id="store-"+i;
-  el.innerHTML = `<div class="name">budni ${s.n}</div><div class="addr">${s.a}</div>${body(s)}`;
-  const focus = () => { map.flyTo(s.ll,16,{duration:.6}); m.openPopup(); document.querySelectorAll(".store.active").forEach(x=>x.classList.remove("active")); el.classList.add("active"); if (window.innerWidth<=760) document.getElementById("map").scrollIntoView({behavior:"smooth",block:"start"}); };
-  el.addEventListener("click", e => { if (e.target.closest("a")) return; focus(); });
-  el.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); focus(); }});
-  m.on("click", ()=>{ document.querySelectorAll(".store.active").forEach(x=>x.classList.remove("active")); el.classList.add("active"); });
-  listEl.appendChild(el);
+  el.className="store"; el.tabIndex=0; el.id="store-"+i; el.setAttribute("role","button");
+  el.innerHTML = card(s);
+  groups[s.ar].items.push(el);
   return {s,m,el};
 });
+groups.forEach((g,gi)=>{ const next = groups[gi+1]?.h || null; g.items.forEach(el=>listEl.insertBefore(el,next)); });
 
-function applyFilter(f){
-  document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.f===f)));
+function select(it, fromMap){
+  items.forEach(x=>{ x.el.classList.toggle("active", x===it); x.m.getElement()?.firstChild?.classList.toggle("sel", x===it); });
+  if (!fromMap){ map.flyTo(it.s.ll,15.5,{duration:.6}); it.m.openPopup();
+    if (window.innerWidth<=820) document.getElementById("map").scrollIntoView({behavior:"smooth",block:"start"}); }
+  else it.el.scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+items.forEach(it=>{
+  it.el.addEventListener("click", e=>{ if (!e.target.closest("a")) select(it,false); });
+  it.el.addEventListener("keydown", e=>{ if (e.key==="Enter"||e.key===" "){ e.preventDefault(); select(it,false); }});
+  it.m.on("click", ()=>select(it,true));
+});
+
+function applyFilter(f, fit=true){
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.f===f)));
   const shown=[];
-  items.forEach(({s,m,el})=>{
-    const ok = f==="all" || (f==="riesen" ? s.riesen!=="no" : s.classic!=="no");
-    el.hidden = !ok;
-    if (ok){ m.addTo(map); shown.push(s.ll);} else m.remove();
+  items.forEach(it=>{
+    const ok = has(it.s,f);
+    it.el.hidden = !ok;
+    if (ok){ it.m.addTo(map); shown.push(it.s.ll); }
+    else { it.m.remove(); it.el.classList.remove("active"); }
   });
-  if (shown.length) map.fitBounds(shown,{padding:[30,30],maxZoom:15});
+  groups.forEach(g=>g.h.hidden = !g.items.some(el=>!el.hidden));
+  map.closePopup();
+  if (fit && shown.length) map.fitBounds(shown,{padding:[36,36],maxZoom:15});
   try{ localStorage.setItem("sparkler-filter",f);}catch(e){}
 }
-document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>applyFilter(c.dataset.f)));
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>applyFilter(b.dataset.f)));
+document.querySelectorAll("[data-show]").forEach(b=>b.addEventListener("click",()=>{
+  applyFilter(b.dataset.show); document.getElementById("stores").scrollIntoView({behavior:"smooth",block:"start"});
+}));
 let start="all"; try{ start = localStorage.getItem("sparkler-filter")||"all"; }catch(e){}
+if (!["all","riesen","classic"].includes(start)) start="all";
 applyFilter(start);
 </script>
 
-</body>
-</html>
+</body></html>
